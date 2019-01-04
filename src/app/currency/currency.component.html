@@ -1,3 +1,26 @@
-<select name="rates" id="rates">
-  <option *ngFor='let rate of rates' [value]='rate.rate'>{{rate.name}}</option>
-</select>
+<h1>HTML File for Currency</h1>
+
+<!-- Section for converting amout from specified currency -->
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <label for="amount">Amount From:</label>
+      <input type="number" (input)='updateAmountFrom($event)' class=' form-control' [value]='amountFrom'>
+    </div>
+    <select name="currencies" [(ngModel)]='convertFrom'>
+      <option *ngFor='let currency of currencies' [value]='currency'>{{currency}}</option>
+    </select>
+
+  </div>
+
+  <!-- Section for converting amout to specified currency -->
+  <div class="col-md-6">
+    <div class="form-group">
+      <label for="amount">Amount To:</label>
+      <input type="number" (input)='updateAmountTo($event)' class=' form-control' [value]='amountTo'>
+    </div>
+    <select name="currencies" [(ngModel)]='convertTo'>
+      <option *ngFor='let currency of currencies' [value]='currency'>{{currency}}</option>
+    </select>
+  </div>
+</div>

@@ -1,5 +1,4 @@
 export class Rates {
-
   name: string;
-  rate: number;
+  symbol: string;
 }

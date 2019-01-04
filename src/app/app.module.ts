@@ -4,13 +4,13 @@ import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { InputComponent } from './input/input.component';
+
+// Import Custom Components
 import { CurrencyComponent } from './currency/currency.component';
 
 @NgModule( {
   declarations: [
     AppComponent,
-    InputComponent,
     CurrencyComponent
   ],
   imports: [

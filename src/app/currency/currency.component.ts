@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Rates } from '../models/rates.models';
 
 @Component( {
   selector: 'app-currency',
@@ -7,22 +6,65 @@ import { Rates } from '../models/rates.models';
 } )
 
 export class CurrencyComponent {
-  rates: Rates[];
-  selected: string;
+  // Holds the convert from currency value.
+  convertFrom: string;
+
+  // Holds the convert to currency value.
+  convertTo: string;
+
+  // Will be the dollar amount to convert from.
+  amountFrom: number;
+
+  // Will be the dollar amount to convert to.
+  amountTo: number;
+
+  // Will reference the amount
+  amount: number;
+  url: string;
+
+  currencies: string[];
 
   constructor () {
-    this.rates = [
-      { name: 'HRK', rate: 7.4125 }, { name: 'HUF', rate: 321.56 }, { name: 'IDR', rate: 16608.2 }, { name: 'PHP', rate: 59.991 },
-      { name: 'TRY', rate: 6.0067 }, { name: 'RON', rate: 4.6536 }, { name: 'ISK', rate: 133 }, { name: 'SEK', rate: 10.2725 },
-      { name: 'THB', rate: 37.026 }, { name: 'PLN', rate: 4.2945 }, { name: 'GBP', rate: 0.90073 }, { name: 'CAD', rate: 1.55 },
-      { name: 'AUD', rate: 1.6161 }, { name: 'MYR', rate: 4.7419 }, { name: 'NZD', rate: 1.6964 }, { name: 'CHF', rate: 1.1279 },
-      { name: 'DKK', rate: 7.4672 }, { name: 'SGD', rate: 1.5617 }, { name: 'CNY', rate: 7.8109 }, { name: 'BGN', rate: 1.9558 },
-      { name: 'CZK', rate: 25.858 }, { name: 'BRL', rate: 4.4786 }, { name: 'JPY', rate: 126.14 }, { name: 'KRW', rate: 1276.84 },
-      { name: 'INR', rate: 79.9445 }, { name: 'MXN', rate: 22.6283 }, { name: 'RUB', rate: 78.8767 }, { name: 'HKD', rate: 8.9109 },
-      { name: 'USD', rate: 1.1377 }, { name: 'ZAR', rate: 16.5208 }, { name: 'ILS', rate: 4.3027 }, { name: 'NOK', rate: 9.9698 } ];
+    // Get currency symbols based on data from https://exchangeratesapi.io
+    this.url = 'https://api.exchangeratesapi.io/latest?symbols';
+    this.currencies = [ 'AUD', 'BGN', 'BRL', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'GBP', 'HKD', 'HRK', 'HUF', 'IDR', 'ILS', 'INR',
+      'ISK', 'JPY', 'KRW', 'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PLN', 'RON', 'RUB', 'SEK', 'SGD', 'THB', 'TRY', 'USD', 'ZAR' ];
 
-    this.selected = 'USD';
+    // Set default values for amounts & currency
+    this.amountFrom = 1;
+    this.amountTo = 1;
+    this.convertFrom = 'USD';
+    this.convertTo = 'GBP';
+
   }
 
+  // Listen to input events and update the amount
+  updateAmountFrom ( event ) {
+    this.amountFrom = event.target.value;
+    console.log( `Convert ${ this.amountFrom } ${ this.convertFrom }, to ${ this.amountTo }: ${ this.convertTo }. ` );
+    this.getConversionRate();
+  }
 
+  updateAmountTo ( event ) {
+    this.amountTo = event.target.value;
+    console.log( `Convert ${ this.amountFrom } ${ this.convertFrom }, to ${ this.amountTo }: ${ this.convertTo }. ` );
+    this.getConversionRate();
+  }
+
+  // TODO: Create a function that will convert the currency from a defined base to a specified base.
+  // 1. run this function if the amount from field changes - update the amount to input field
+  // 2. run this function if the amount to field changes - update the amount from input field
+  // 3. run this function if the dropdown field changes.
+  // }
+
+  getConversionRate () {
+    const oldCurrency = this.convertFrom;
+    const newCurrency = this.convertTo;
+    console.log( newCurrency );
+    // Need a base symbol - the symbol to convert from
+    // Need the converted symbol - the symbol to convert to
+
+    fetch( `https://api.exchangeratesapi.io/latest?symbols=${ oldCurrency },${ newCurrency }&base=${ oldCurrency }` )
+      .then( response => response.json().then( data => console.log( data.rates.newCurrency ) ) );
+  }
 }
