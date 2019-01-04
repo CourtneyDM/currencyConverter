@@ -39,25 +39,24 @@ export class CurrencyComponent {
   }
 
   // Listen to input events and update the amount
+  // TODO: Use Observables to minimize repeated code - RxJS vs NgRx
   updateAmountFrom ( event ) {
     this.amountFrom = event.target.value;
     console.log( `Convert ${ this.amountFrom } ${ this.convertFrom }, to ${ this.amountTo }: ${ this.convertTo }. ` );
     this.getConversionRate();
   }
 
+  // TODO: Implement DRY code - this function performs the same tasks as the function above.
   updateAmountTo ( event ) {
     this.amountTo = event.target.value;
     console.log( `Convert ${ this.amountFrom } ${ this.convertFrom }, to ${ this.amountTo }: ${ this.convertTo }. ` );
     this.getConversionRate();
   }
 
-  // TODO: Create a function that will convert the currency from a defined base to a specified base.
-  // 1. run this function if the amount from field changes - update the amount to input field
-  // 2. run this function if the amount to field changes - update the amount from input field
-  // 3. run this function if the dropdown field changes.
-  // }
-
   getConversionRate () {
+    // This function fetches the data from the API and returns the conversion rate for the specified currencies.
+    // TODO: Update the amount by calculating the conversion rate and the amount inputed by the user
+
     const oldCurrency = this.convertFrom;
     const newCurrency = this.convertTo;
     console.log( newCurrency );
@@ -67,4 +66,6 @@ export class CurrencyComponent {
     fetch( `https://api.exchangeratesapi.io/latest?symbols=${ oldCurrency },${ newCurrency }&base=${ oldCurrency }` )
       .then( response => response.json().then( data => console.log( data.rates.newCurrency ) ) );
   }
+
+  // TODO: Create functionality to draw graph using Cytoscape.js
 }
