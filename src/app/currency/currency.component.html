@@ -3,7 +3,7 @@
 
 <!-- Section for converting amout from specified currency -->
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-5">
     <div class="form-group">
       <label for="amount">Amount From:</label>
       <input type="number" class=' form-control' [(ngModel)]='amountFrom'>
@@ -15,7 +15,7 @@
   </div>
 
   <!-- Section for converting amout to specified currency -->
-  <div class="col-md-6">
+  <div class="col-md-5">
     <div class="form-group">
       <label for="amount">Amount To:</label>
       <input type="number" class=' form-control' [(ngModel)]='amountTo'>
@@ -26,5 +26,8 @@
       </option>
     </select>
   </div>
-  <p *ngFor='let convert of converted'>Hi</p>
+  <div class="col-md-2">
+
+    <p>Your Conversion:</p>
+  </div>
 </div>
