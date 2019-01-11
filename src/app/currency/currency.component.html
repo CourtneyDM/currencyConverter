@@ -6,10 +6,10 @@
   <div class="col-md-6">
     <div class="form-group">
       <label for="amount">Amount From:</label>
-      <input type="number" (input)='updateAmountFrom($event)' class=' form-control' [value]='amountFrom'>
+      <input type="number" class=' form-control' [(ngModel)]='amountFrom'>
     </div>
-    <select name="currencies.currencySymbol" [(ngModel)]='convertFrom'>
-      <option *ngFor='let currency of currencies' [value]='currency.currencyRate'>{{currency.currencySymbol}}</option>
+    <select name="convertFrom" [(ngModel)]='convertFrom' (change)='getUserInput($event, amountFrom)'>
+      <option *ngFor='let currency of currencies' [value]='currency.currencySymbol'>{{currency.currencySymbol}}</option>
     </select>
 
   </div>
@@ -18,10 +18,13 @@
   <div class="col-md-6">
     <div class="form-group">
       <label for="amount">Amount To:</label>
-      <input type="number" (input)='updateAmountTo($event)' class=' form-control' [value]='amountTo'>
+      <input type="number" class=' form-control' [(ngModel)]='amountTo'>
     </div>
-    <select name="currencies" [(ngModel)]='convertTo'>
-      <option *ngFor='let currency of currencies' [value]='currency.currencyRate'>{{currency.currencySymbol}}</option>
+    <select name="convertTo" [(ngModel)]='convertTo' (change)='getUserInput($event, amountTo)'>
+      <option *ngFor='let currency of currencies' [value]='currency.currencySymbol'>
+        {{currency.currencySymbol}}
+      </option>
     </select>
   </div>
+  <p *ngFor='let convert of converted'>Hi</p>
 </div>

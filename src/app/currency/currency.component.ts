@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Rate } from '../models/rates.models';
+import { Converted } from '../models/converted.models';
 
 @Component( {
   selector: 'app-currency',
@@ -8,17 +9,23 @@ import { Rate } from '../models/rates.models';
 
 export class CurrencyComponent {
 
-  convertFrom: string;
-  convertTo: string;
   amountFrom: number;
   amountTo: number;
   amount: number;
-  url: string;
-  currencyRate: Rate;
+  baseCurrency: string;
+  convertFrom: string;
+  convertTo: string;
+  conversion: Converted;
+  converted: any[];
   currencies: any[];
+  currencyRate: Rate;
+  url: string;
 
   constructor () {
-    this.url = 'https://api.exchangeratesapi.io/latest?base=USD';
+    this.baseCurrency = '';
+    this.convertFrom = 'USD';
+    this.convertTo = 'GBP';
+    this.url = 'https://api.exchangeratesapi.io/latest?';
 
     // Set default values for amounts & currency
     this.amountFrom = 1;
@@ -26,48 +33,54 @@ export class CurrencyComponent {
     this.currencies = [];
 
     // Get the currency symbols and rates
-    fetch( 'https://api.exchangeratesapi.io/latest?base=USD' )
+    fetch( this.url + this.convertTo )
       .then( response => response.json() )
       .then( data => {
         // Convert the data object into array
-        const currencies = Object.entries( ( data.rates ) );
-        currencies.map( currency => {
+        const symbols = Object.entries( ( data.rates ) );
+        symbols.map( symbol => {
+
           // Set the currency symbols and their rates
-          this.currencyRate = { currencySymbol: currency[ 0 ], currencyRate: currency[ 1 ] };
+          this.currencyRate = { currencySymbol: symbol[ 0 ], currencyRate: symbol[ 1 ] };
           this.currencies.push( this.currencyRate );
-          // console.log( this.currencyRate );
         } );
       } );
-    console.log( this.currencies );
+
+
   }
 
-  // Listen to input events and update the amount
-  // TODO: Use Observables to minimize repeated code - RxJS vs NgRx
-  updateAmountFrom ( event ) {
-    this.amountFrom = event.target.value;
-    console.log( `Convert ${ this.amountFrom } ${ this.convertFrom }, to ${ this.amountTo }: ${ this.convertTo }. ` );
-    this.getConversionRate();
+  // Get the values from the user input
+  getUserInput ( event, amount ) {
+    if ( event.target.name === 'convertFrom' ) {
+      this.baseCurrency = event.target.value;
+      this.amountFrom = amount;
+      this.getCurrencyConversion( this.baseCurrency, this.convertTo );
+    }
+    if ( event.target.name === 'convertTo' ) {
+      this.baseCurrency = event.target.value;
+      this.amountTo = amount;
+      this.getCurrencyConversion( this.baseCurrency, this.convertFrom );
+    }
+
+    console.log( this.converted );
   }
 
-  // TODO: Implement DRY code - this function performs the same tasks as the function above.
-  updateAmountTo ( event ) {
-    this.amountTo = event.target.value;
-    console.log( `Convert ${ this.amountFrom } ${ this.convertFrom }, to ${ this.amountTo }: ${ this.convertTo }. ` );
-    this.getConversionRate();
-  }
 
-  getConversionRate () {
-    // This function fetches the data from the API and returns the conversion rate for the specified currencies.
-    // TODO: Update the amount by calculating the conversion rate and the amount inputed by the user
-
-    const oldCurrency = this.convertFrom;
-    const newCurrency = this.convertTo;
-    console.log( newCurrency );
-    // Need a base symbol - the symbol to convert from
-    // Need the converted symbol - the symbol to convert to
-
-    fetch( `https://api.exchangeratesapi.io/latest?symbols=${ oldCurrency },${ newCurrency }&base=${ oldCurrency }` )
-      .then( response => response.json().then( data => console.log( data.rates.newCurrency ) ) );
+  // Get the conversion rate
+  getCurrencyConversion ( fromSymbol, toSymbol ) {
+    this.converted = [];
+    fetch( this.url + `base=${ fromSymbol }` + `&symbols=${ fromSymbol },${ toSymbol }` )
+      .then( response => response.json() )
+      .then( data => {
+        const entries = Object.entries( ( data.rates ) );
+        this.conversion = {
+          firstSymbol: entries[ 0 ][ 0 ],
+          firstSymbolRate: entries[ 0 ][ 1 ],
+          secondSymbol: entries[ 1 ][ 0 ],
+          secondSymbolRate: entries[ 1 ][ 1 ]
+        };
+        return this.converted.push( this.conversion );
+      } );
   }
 
   // TODO: Create functionality to draw graph using Cytoscape.js
