@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Rate } from '../models/rates.models';
 
 @Component( {
   selector: 'app-currency',
@@ -6,36 +7,38 @@ import { Component } from '@angular/core';
 } )
 
 export class CurrencyComponent {
-  // Holds the convert from currency value.
+
   convertFrom: string;
-
-  // Holds the convert to currency value.
   convertTo: string;
-
-  // Will be the dollar amount to convert from.
   amountFrom: number;
-
-  // Will be the dollar amount to convert to.
   amountTo: number;
-
-  // Will reference the amount
   amount: number;
   url: string;
-
-  currencies: string[];
+  currencyRate: Rate;
+  currencies: any[];
 
   constructor () {
-    // Get currency symbols based on data from https://exchangeratesapi.io
-    this.url = 'https://api.exchangeratesapi.io/latest?symbols';
-    this.currencies = [ 'AUD', 'BGN', 'BRL', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'GBP', 'HKD', 'HRK', 'HUF', 'IDR', 'ILS', 'INR',
-      'ISK', 'JPY', 'KRW', 'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PLN', 'RON', 'RUB', 'SEK', 'SGD', 'THB', 'TRY', 'USD', 'ZAR' ];
+    this.url = 'https://api.exchangeratesapi.io/latest?base=USD';
 
     // Set default values for amounts & currency
     this.amountFrom = 1;
     this.amountTo = 1;
-    this.convertFrom = 'USD';
-    this.convertTo = 'GBP';
+    this.currencies = [];
 
+    // Get the currency symbols and rates
+    fetch( 'https://api.exchangeratesapi.io/latest?base=USD' )
+      .then( response => response.json() )
+      .then( data => {
+        // Convert the data object into array
+        const currencies = Object.entries( ( data.rates ) );
+        currencies.map( currency => {
+          // Set the currency symbols and their rates
+          this.currencyRate = { currencySymbol: currency[ 0 ], currencyRate: currency[ 1 ] };
+          this.currencies.push( this.currencyRate );
+          // console.log( this.currencyRate );
+        } );
+      } );
+    console.log( this.currencies );
   }
 
   // Listen to input events and update the amount
