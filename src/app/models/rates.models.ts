@@ -1,5 +1,5 @@
 // Model that will be used to identify currency rates
-export class Rate {
+export interface Rate {
   currencySymbol: any;
   currencyRate: any;
 }
